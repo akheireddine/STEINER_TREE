@@ -221,14 +221,16 @@ class Whole_Graph:
                 maximumFitness = individu.get_fitness()
             i += 1
 
-#        print "minFitness", minimumFitness
-#        print "---------------------------------------------------------------"
+        print "minFitness", minimumFitness
+        print "---------------------------------------------------------------"
+        time.sleep(100)
         return i_meilleur
         
     def stocker_best_individu(self, i):
         if self.best_individu.get_fitness() > self.ListeIndividus[i].get_fitness():
             self.best_individu = Graphe_Individu(self, self.ListeIndividus[i].get_dictSteinerNodes().copy())
             self.last_time_bestIndividu = time.time()
+            print "============== MAJ BEST INDIVIDU ============== \n minFitness (%.2f"%(self.last_time_bestIndividu-self.start)+" sec) : "+self.best_individu.get_fitness()
             
             
     def get_time_max_fitness(self):
@@ -475,8 +477,8 @@ class Whole_Graph:
             if i not in dictSteinerNodes.keys():
                 dictSteinerNodes[i] = 0
         
-        return Graphe_Individu(self,dictSteinerNodes)
-        
+        # return Graphe_Individu(self,dictSteinerNodes)
+        return dictSteinerNodes
 
         
         
@@ -533,8 +535,9 @@ class Whole_Graph:
         for i in self.steinerNodes:
             if i not in dictSteinerNodez.keys():
                 dictSteinerNodez[i] = 0
-        return Graphe_Individu(self,dictSteinerNodez)
-        
+
+        # return Graphe_Individu(self,dictSteinerNodez)
+        return dictSteinerNodez
         
         
         
@@ -574,7 +577,6 @@ class Whole_Graph:
         self.dictValuations = self.dictValuationsOriginel.copy()
 
 
-
     def randomisation_des_donnees_initiales(self, probaMinRandomisation, probaMaxRandomisation):
 
         for key in self.dictValuations.keys():             
@@ -593,9 +595,11 @@ class Whole_Graph:
         for i in range(N):
             self.randomisation_des_donnees_initiales(probaMinRandomisaton, probaMaxRandomisation)
 #            ListeDesDictSteinerNodes.append(heuristique())
-            self.ListeIndividus.append(heuristique())
+            dict_indiv = heuristique()
             self.reinitialiser_dictValuations()
-            
+            new_indiv = Graphe_Individu(self,dict_indiv)
+            self.ListeIndividus.append(new_indiv)
+
             if event.is_set():
                 break
 

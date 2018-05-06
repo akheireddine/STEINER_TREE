@@ -82,7 +82,9 @@ class Graphe_Individu:
 
         def fitness(self):
             total_weight = self.MST.get_total_weight() #Poids de la foret
+            # print ">>>>>>> Weight MST {}, {} edges  {} nodes".format(total_weight,len(self.MST.get_edges()),len(self.nodes))
             #Chercher a savoir si tous les noeuds terminaux sont couverts
+            # print "FITNESS {}\n\n".format(total_weight + M*(len(self.nodes) - 1 - len(self.MST.get_edges())))
             return total_weight + M*(len(self.nodes) - 1 - len(self.MST.get_edges()))
             
             
