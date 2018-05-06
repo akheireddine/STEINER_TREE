@@ -220,15 +220,15 @@ class Whole_Graph:
                 maximumFitness = individu.get_fitness()
             i += 1
 
-        print "minFitness", minimumFitness
-        print "---------------------------------------------------------------"
+        # print "minFitness", minimumFitness
+        # print "---------------------------------------------------------------"
         return i_meilleur
         
     def stocker_best_individu(self, i):
         if self.best_individu.get_fitness() > self.ListeIndividus[i].get_fitness():
             self.best_individu = Graphe_Individu(self, self.ListeIndividus[i].get_dictSteinerNodes().copy())
             self.last_time_bestIndividu = time.time()
-            print "============== MAJ BEST INDIVIDU ============== \n minFitness (%.2f"%(self.last_time_bestIndividu-self.start)+" sec) : "+self.best_individu.get_fitness()
+            # print "============== MAJ BEST INDIVIDU ============== \n minFitness (%.2f"%(self.last_time_bestIndividu-self.start)+" sec) : "+self.best_individu.get_fitness()
             
             
     def get_time_max_fitness(self):

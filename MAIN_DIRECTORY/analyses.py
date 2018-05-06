@@ -143,10 +143,10 @@ def appliquer_algo_genetique_groupe_instances_randomise(dirname, Liste_opt, tail
     Liste_opt_gene = [(-1,-1) for i in range(nb_instances)]
     Liste_opt_eli = [(-1,-1) for i in range(nb_instances)]
     
-    
+    heuristique = "ACPM"
     
     type_inst = dirname.split("/")[1]
-    with open("analyse/eval_"+type_inst+"_algo_gen_randh_N_%d"%taillePopulation+".csv",'w') as f:
+    with open("analyse/eval_"+type_inst+"_algo_gen_"+heuristique+"_N_%d"%taillePopulation+".csv",'w') as f:
         
         entete_csv = ["NUM_INST"] + ["GEN","TIME_GEN"] + ["ELI","TIME_ELI"] + ["OPT"]
         writer = csv.DictWriter(f, fieldnames=entete_csv)
@@ -156,7 +156,7 @@ def appliquer_algo_genetique_groupe_instances_randomise(dirname, Liste_opt, tail
         
         for filename_stp in os.listdir(dirname):
             number = int(filename_stp[1:3])
-            gen,time_gen, eli,time_eli = appliquer_algo_genetique_randomise(dirname+"/"+filename_stp, Liste_opt[number - 1], taillePopulation,"PCM",  probaMutation, probaMinRandomisation, probaMaxRandomisation, probaCroisement, timeLimit)
+            gen,time_gen, eli,time_eli = appliquer_algo_genetique_randomise(dirname+"/"+filename_stp, Liste_opt[number - 1], taillePopulation, heuristique,  probaMutation, probaMinRandomisation, probaMaxRandomisation, probaCroisement, timeLimit)
             Liste_opt_gene.insert(number,(gen,time_gen))
             Liste_opt_eli.insert(number,(eli,time_eli))
 
@@ -166,13 +166,7 @@ def appliquer_algo_genetique_groupe_instances_randomise(dirname, Liste_opt, tail
             csvLine["ELI"] = eli
             csvLine["TIME_ELI"] = time_eli 
             csvLine["OPT"] = Liste_opt[number]
-#        for i in range(nb_instances):
-            
-#            csvLine["GEN"] = Liste_opt_gene[i][0]
-#            csvLine["TIME_GEN"] = Liste_opt_gene[i][1]
-#            csvLine["ELI"] = Liste_opt_eli[i][0]
-#            csvLine["TIME_ELI"] = Liste_opt_eli[i][1]
-#            csvLine["OPT"] = listeOpt[i]
+
             writer.writerow(csvLine)
             f.flush()
             csvLine=dict()   
@@ -349,7 +343,7 @@ pMutationMax = 0.04
 probaMutation = random.uniform(pMutationMin, pMutationMax)
 filename_stp = "../C/c18.stp"
 #appliquer_algo_genetique(filename_stp,50,probaMutation,timeLimit=60)
-taillePopulation = 10
+taillePopulation = 70
 probaMinRandomisaton = 0.05
 probaMaxRandomisation = 0.2
 
@@ -360,33 +354,33 @@ G = Whole_Graph(filename_stp)
 # print "_______________V = {}, E = {} , T = {}   OPT VALUE {} ____________________\n".format(G.NumNodes,G.NumEdges,G.NumTerminals,optimal_value(type_inst)[7])
 # G.generer_N_individus_aleatoire(taillePopulation,0.2,0.5,stop_event)
 # G.generer_N_individus_heuristique(taillePopulation,G.heuristique_ACPM,probaMinRandomisaton,probaMaxRandomisation,stop_event)
-compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation)
+# compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation)
 
 # appliquer_comparaison_population_initiale_groupe_instances("../"+type_inst,optimal_value(type_inst),taillePopulation)
 
 
 
 
-#for type_inst in ["B","C","D","E"]:
-#    dirname = "../"+type_inst
-#
-#    timeLimit=10
+for type_inst in ["B","C","D","E"]:
+   dirname = "../"+type_inst
+
+   timeLimit=300
 #    try:
 #        print "ALGO GENETIQUE ALEATOIRE GROUPE INSTANCE "+type_inst
-#        appliquer_algo_genetique_groupe_instances_aleatoire(dirname,optimal_value(type_inst), taillePopulation,timeLimit=timeLimit)  
+#        appliquer_algo_genetique_groupe_instances_aleatoire(dirname,optimal_value(type_inst), taillePopulation,timeLimit=timeLimit)
 #    except:
 #        pass
     
-#    try:
-#        print "ALGO GENETIQUE ALEATOIRE GROUPE INSTANCE "+type_inst
-#        appliquer_recherche_locale_groupe_instances_population_rh(dirname,optimal_value(type_inst),taillePopulation,timeLimit=timeLimit)
-#    except:
-#        pass
+   # try:
+   #     print "ALGO GENETIQUE ALEATOIRE GROUPE INSTANCE "+type_inst
+   #     appliquer_recherche_locale_groupe_instances_population_rh(dirname,optimal_value(type_inst),taillePopulation,timeLimit=timeLimit)
+   # except:
+   #     pass
 #    
-#    try:
-#        appliquer_algo_genetique_groupe_instances_randomise(dirname,optimal_value(type_inst), taillePopulation,timeLimit=timeLimit)
-#    except:
-#        pass
+   try:
+       appliquer_algo_genetique_groupe_instances_randomise(dirname,optimal_value(type_inst), taillePopulation,timeLimit=timeLimit)
+   except:
+       pass
 #    
 #    try:
 #        print "COMPARAISON POPULATION ALEA ET RANDOM HEURISTIC    GROUPE INSTANCE :"+type_inst
