@@ -1,0 +1,40 @@
+include CHANGES.rst
+include LICENSE.txt
+include NOTICE.txt
+include README.rst
+include REFERENCES.txt
+include docs/*
+include examples/*
+include testsuite/*
+include py_alg_dat/__init__.py
+include py_alg_dat/array_list.py
+include py_alg_dat/association.py
+include py_alg_dat/binary_heap.py
+include py_alg_dat/container.py
+include py_alg_dat/dfs_edge_classification.py
+include py_alg_dat/doubly_linked_list.py
+include py_alg_dat/entry.py
+include py_alg_dat/graph.py
+include py_alg_dat/graph_algorithms.py
+include py_alg_dat/graph_edge.py
+include py_alg_dat/graph_path.py
+include py_alg_dat/graph_vertex.py
+include py_alg_dat/graph_visitor.py
+include py_alg_dat/iterator.py
+include py_alg_dat/linked_list.py
+include py_alg_dat/linked_list_iterator.py
+include py_alg_dat/max_heap.py
+include py_alg_dat/min_heap.py
+include py_alg_dat/minimum_spanning_tree.py
+include py_alg_dat/partition.py
+include py_alg_dat/queue.py
+include py_alg_dat/stack.py
+include py_alg_dat/singly_linked_list.py
+include py_alg_dat/string_visitor.py
+include py_alg_dat/vertex_visitor.py
+include py_alg_dat/visitor.py
+recursive-include examples *
+recursive-include docs *
+recursive-include testsuite *
+
+

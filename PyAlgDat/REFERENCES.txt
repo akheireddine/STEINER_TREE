@@ -1,0 +1,97 @@
+*************************************************************************************************
+* References
+*************************************************************************************************
+Python packaging:
+-------------------------------------------------
+http://docs.python-guide.org/en/latest/writing/documentation/#restructuredtext-ref
+http://www.scotttorborg.com/python-packaging/metadata.html
+https://coderwall.com/p/qawuyq/use-markdown-readme-s-in-python-modules
+https://confluence.atlassian.com/display/BITBUCKET/Display+README+text+on+the+overview
+http://sourceforge.net/p/pyke/pre_2to3/ci/default/tree/README.txt
+http://www.jeffknupp.com/blog/2013/08/16/open-sourcing-a-python-project-the-right-way/
+https://docs.python.org/2/install/
+https://www.digitalocean.com/community/tutorials/how-to-package-and-distribute-python-applications
+https://tom-christie.github.io/articles/pypi/
+https://pythonhosted.org/setuptools/setuptools.html
+
+General data structures:
+-------------------------------------------------
+http://www.keithschwarz.com/interesting/
+
+Connected components and Tarjan's algorithm:
+-------------------------------------------------
+http://www.logarithmic.net/pfh/blog/01208083168
+
+Kruskal:
+-------------------------------------------------
+http://www.cs.cmu.edu/~ckingsf/class/02713-s13/schedule.html
+
+Bellman-Ford:
+-------------------------------------------------
+https://gist.github.com/raph-amiard/703936
+
+Union-Find/Disjoint sets:
+-------------------------------------------------
+http://evandempsey.wordpress.com/2012/12/23/union-find-data-structure-in-python/
+http://www.mathblog.dk/disjoint-set-data-structure/
+https://github.com/israelst/Algorithms-Book--Python/blob/master/5-Greedy-algorithms/kruskal.py
+http://pyalda.com/data-types/general/disjoint-sets.html
+http://www.lordsutch.com/linux/py/mst/mst.py
+http://www.ics.uci.edu/~eppstein/PADS/UnionFind.py
+http://shriphani.com/blog/2010/05/20/disjoint-set-data-structure/
+http://anotherworldofthoughts.blogspot.dk/2013/03/disjoint-set-data-structure-in-python.html
+http://eclipsesource.com/blogs/2012/12/10/implementing-special-sets-in-java-partition-a-k-a-disjointset/
+http://helloacm.com/disjoint-sets/
+https://www.cs.drexel.edu/~kschmidt/CS520/Programs/Parsers/mfSet.py
+https://gist.github.com/gtkesh/5283438
+http://www.java2s.com/Code/Java/Collections-Data-Structure/Implementationofdisjointsetdatastructure.htm
+https://code.google.com/p/ai4u/source/browse/com.ai4u.util/trunk/src/com/ai4u/util/disjointSet/ArrayDisjointSet.java
+http://alvinalexander.com/java/jwarehouse/eclipse/org.eclipse.ui.ide/src/org/eclipse/ui/internal/ide/misc/DisjointSet.java.shtml
+http://web.eecs.utk.edu/courses/fall2012/cs302/Notes/Disjoint/
+http://algs4.cs.princeton.edu/15uf/
+http://stackoverflow.com/questions/15331877/creating-dictionaries-of-friends-that-know-other-friends-in-python
+http://www.keithschwarz.com/interesting/code/union-find/UnionFind.java.html
+
+Edge Classification:
+-------------------------------------------------
+http://www.personal.kent.edu/~rmuhamma/Algorithms/MyAlgorithms/GraphAlgor/depthSearch.htm
+http://pages.cs.wisc.edu/~vernon/cs367/notes/13.GRAPH.html#dfsUse
+http://algs4.cs.princeton.edu/41undirected/Cycle.java.html
+http://depcom.uqac.ca/~gimbeau/inf805/slides/DFS.pdf
+http://www.cs.cornell.edu/courses/CS2112/2012sp/lectures/lec24/lec24-12sp.html
+http://courses.csail.mit.edu/6.006/fall11/rec/rec14.pdf
+http://www.cs.hunter.cuny.edu/~saad/courses/493.55/notes/note5.pdf (contains simple proof)
+http://www.cs.nthu.edu.tw/~wkhon/algo09/lectures/lecture24.pdf
+http://en.wikipedia.org/wiki/Depth-first_search
+http://www.youtube.com/watch?v=vDR6jyFmJ54
+http://jeremykun.com/tag/depth-first-search/
+http://homepages.ius.edu/rwisman/C455/html/notes/Chapter22/DFS.htm
+http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-006-introduction-to-algorithms-spring-2008/recitations/recitation11.pdf
+
+Maze:
+-------------------------------------------------
+http://www.laurentluce.com/posts/solving-mazes-using-python-simple-recursivity-and-a-search/
+http://stackoverflow.com/questions/12995434/representing-and-solving-a-maze-given-an-image
+https://www.kishwaukeecollege.edu/faculty/dklick/cis260/MazeSolver.html
+http://en.wikipedia.org/wiki/Maze_solving_algorithm#Shortest_path_algorithm
+http://29a.ch/2009/9/7/generating-maps-mazes-with-python
+https://github.com/vishpat/Practice/blob/master/python/graph/maze.py
+
+A-star:
+-------------------------------------------------
+https://gist.github.com/jdp/1687840
+http://forrst.com/posts/A_algorithm_in_python-B4c
+http://www.redblobgames.com/pathfinding/a-star/implementation.html
+
+Linked List:
+-------------------------------------------------
+http://www.cs.cmu.edu/~adamchik/15-121/lectures/Linked%20Lists/linked%20lists.html
+
+Python shallow copy and deepcopy:
+-------------------------------------------------
+http://pymotw.com/2/copy/
+
+Binary Tree:
+-------------------------------------------------
+http://interactivepython.org/runestone/static/pythonds/Trees/bst.html
+
