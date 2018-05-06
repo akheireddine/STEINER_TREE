@@ -2,6 +2,7 @@ import random
 import  numpy as np
 import time
 #import pydotplus
+from threading import Event
 
 import sys
 import os 
@@ -587,7 +588,7 @@ class Whole_Graph:
             self.dictValuations[key] = int(self.dictValuations[key])
                 
               
-    def generer_N_individus_heuristique(self, N, heuristique, probaMinRandomisaton, probaMaxRandomisation,event):
+    def generer_N_individus_heuristique(self, N, heuristique, probaMinRandomisaton, probaMaxRandomisation,event=Event()):
         
         self.ListeIndividus = list()
         for i in range(N):
