@@ -29,14 +29,12 @@ class Graphe_Individu:
 #            self.ind_dictAdjacence = {node : list() for node in self.nodes}
             self.ind_dictAdjacence = {node : list() for node in range(1, wholeGraph.NumNodes + 1)}       #ATTRIBUT
 
-            # print "ensemble des nodes : ", self.nodes
             self.graphe = UnDirectedWeightedGraph(len(self.nodes))                    #ATTRIBUT
             self.m_a_j_GrapheETAdjacence()  #ET MAJ_dict ADJACENCE
 
             self.MST = self.MST_by_Kruskal()                                          #ATTRIBUT
             self.my_fitness = self.fitness()                                          #ATTRIBUT
             
-            # print self.my_fitness
 
         def get_dictSteinerNodes(self):
             return self.dictSteinerNodes
@@ -62,7 +60,6 @@ class Graphe_Individu:
             # Ajouter les nodes
             self.dictVertices = {n : UnWeightedGraphVertex(self.graphe, n) for n in self.nodes}
             for idd, Vertex in self.dictVertices.items():
-                # print Vertex
                 self.graphe.add_vertex(Vertex)
             # Ajouter les edges
             for nodes, weight in self.wholeGraph.get_dictValuations().items():
@@ -82,9 +79,7 @@ class Graphe_Individu:
 
         def fitness(self):
             total_weight = self.MST.get_total_weight() #Poids de la foret
-            # print ">>>>>>> Weight MST {}, {} edges  {} nodes".format(total_weight,len(self.MST.get_edges()),len(self.nodes))
             #Chercher a savoir si tous les noeuds terminaux sont couverts
-            # print "FITNESS {}\n\n".format(total_weight + M*(len(self.nodes) - 1 - len(self.MST.get_edges())))
             return total_weight + M*(len(self.nodes) - 1 - len(self.MST.get_edges()))
             
             

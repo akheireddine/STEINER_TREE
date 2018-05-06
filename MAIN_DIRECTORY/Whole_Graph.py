@@ -123,10 +123,9 @@ class Whole_Graph:
     def generer_N_individus_aleatoire(self, N, probaMin, probaMax,event):
         for i in range(N):
             self.generer_individu_aleatoire(random.uniform(probaMin, probaMax))
-      
             if event.is_set():
                 break
-        
+
     def calculer_proba_associee(self):
         total_cout = 0
         for individu in self.ListeIndividus:
@@ -223,7 +222,6 @@ class Whole_Graph:
 
         print "minFitness", minimumFitness
         print "---------------------------------------------------------------"
-        time.sleep(100)
         return i_meilleur
         
     def stocker_best_individu(self, i):
@@ -601,6 +599,8 @@ class Whole_Graph:
             self.ListeIndividus.append(new_indiv)
 
             if event.is_set():
+                self.reinitialiser_dictValuations()
+                print " I PASSED IN EVENT STOP HEURISTIC "
                 break
 
         

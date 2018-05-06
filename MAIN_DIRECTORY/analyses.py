@@ -78,7 +78,7 @@ def appliquer_algo_genetique_groupe_instances_aleatoire(dirname, Liste_opt, tail
     
         for filename_stp in os.listdir(dirname):
             number = int(filename_stp[1:3])
-            gen,time_gen, eli,time_eli = appliquer_algo_genetique_aleatoire(dirname+"/"+filename_stp, Liste_opt[number], taillePopulation, probaMutation, probaMinGene, probaMaxGene, probaCroisement, timeLimit)
+            gen,time_gen, eli,time_eli = appliquer_algo_genetique_aleatoire(dirname+"/"+filename_stp, Liste_opt[number-1], taillePopulation, probaMutation, probaMinGene, probaMaxGene, probaCroisement, timeLimit)
             Liste_opt_gene.insert(number,(gen,time_gen))
             Liste_opt_eli.insert(number,(eli,time_eli))
     
@@ -136,7 +136,7 @@ def appliquer_algo_genetique_randomise(filename_stp, opt_value, taillePopulation
 
 
 
-def appliquer_algo_genetique_groupe_instances_randomise(dirname, Liste_opt, taillePopulation,probaMutationMin=0.01,probaMutationMax=0.04,probaMinRandomisation=0.05,probaMaxRandomisation=0.2,probaCroisement=0.2,timeLimit=300):
+def appliquer_algo_genetique_groupe_instances_randomise(dirname, Liste_opt, taillePopulation, probaMutationMin=0.01,probaMutationMax=0.04,probaMinRandomisation=0.05,probaMaxRandomisation=0.2,probaCroisement=0.2,timeLimit=300):
     probaMutation = random.uniform(pMutationMin, pMutationMax)
 
     nb_instances = len(os.listdir(dirname))
@@ -156,7 +156,7 @@ def appliquer_algo_genetique_groupe_instances_randomise(dirname, Liste_opt, tail
         
         for filename_stp in os.listdir(dirname):
             number = int(filename_stp[1:3])
-            gen,time_gen, eli,time_eli = appliquer_algo_genetique_randomise(dirname+"/"+filename_stp, Liste_opt[number], taillePopulation,"PCM",  probaMutation, probaMinRandomisation, probaMaxRandomisation, probaCroisement, timeLimit)
+            gen,time_gen, eli,time_eli = appliquer_algo_genetique_randomise(dirname+"/"+filename_stp, Liste_opt[number - 1], taillePopulation,"PCM",  probaMutation, probaMinRandomisation, probaMaxRandomisation, probaCroisement, timeLimit)
             Liste_opt_gene.insert(number,(gen,time_gen))
             Liste_opt_eli.insert(number,(eli,time_eli))
 
@@ -187,6 +187,7 @@ def compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation
     parameters = list()
 
     G = Whole_Graph(filename_stp)
+    print " INDIVIDU AVEC {} NOEUDS {} EDGE et  {} TERMINAUX \n".format(G.NumNodes,G.NumEdges,G.NumTerminals)
     t = time.time()
     args = [taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisaton]
     thread_timeout(G.generer_N_individus_heuristique,args,timeLimit)
@@ -196,11 +197,13 @@ def compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation
         parameters.append(float("inf"))
     else:
         parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
-
+    print "________________PCM DONE en {} sec_______________\n".format(t_pcm)
     parameters.append(t_pcm)
     
     G.reset_listIndividus()
-    
+
+    G.reinitialiser_dictValuations()
+
     t = time.time()
     args = [taillePopulation,probaMinGene,probaMaxGene]
     thread_timeout(G.generer_N_individus_aleatoire,args,timeLimit)
@@ -211,6 +214,7 @@ def compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation
     else:
         parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
     parameters.append(t_alea)
+    print "________________ALEA DONE en {} sec_______________\n".format(t_alea)
 
     G.reset_listIndividus()
     
@@ -225,6 +229,7 @@ def compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation
         parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
 
     parameters.append(t_acpm)
+    print "________________ACPM DONE en {} sec_______________\n".format(t_acpm)
 
     return tuple(parameters)
             
@@ -238,7 +243,7 @@ def appliquer_comparaison_population_initiale_groupe_instances(dirname,Liste_opt
     
     type_inst = dirname.split("/")[1]
     with open("analyse/compare_alea_randh_"+type_inst+"_N_%d"%taillePopulation+".csv",'w') as f:
-
+        print "___POPULATION TAILLE %d\n"%taillePopulation
         entete_csv = ["NUM_INST"] + ["ALEA","TIME_ALEA"] + ["PCM","TIME_PCM"] + ["ACPM","TIME_ACPM"] + ["OPT"]
         writer = csv.DictWriter(f, fieldnames=entete_csv)
         writer.writeheader()     
@@ -246,8 +251,8 @@ def appliquer_comparaison_population_initiale_groupe_instances(dirname,Liste_opt
         
 
         for filename_stp in os.listdir(dirname):
-
             number = int(filename_stp[1:3])
+            print "\n\n___________FILE {}  OPT {}________________\n".format(filename_stp,Liste_opt[number - 1])
             pcm,t_pcm,alea,t_alea,acpm,t_acpm = compare_population_aleatoire_et_r_heuristiques(dirname+"/"+filename_stp,taillePopulation,probaMinRandomisaton,probaMaxRandomisaton,probaMinGene,probaMaxGene)
             Liste_opt_pcm.insert(number,(pcm,t_pcm))
             Liste_opt_alea.insert(number,(alea,t_alea))
@@ -260,7 +265,7 @@ def appliquer_comparaison_population_initiale_groupe_instances(dirname,Liste_opt
             csvLine["TIME_PCM"] = t_pcm 
             csvLine["ACPM"] = acpm
             csvLine["TIME_ACPM"] = t_acpm 
-            csvLine["OPT"] = Liste_opt[number]
+            csvLine["OPT"] = Liste_opt[number - 1]
             
             
             writer.writerow(csvLine)
@@ -325,7 +330,7 @@ def appliquer_recherche_locale_groupe_instances_population_rh(dirname,Liste_opt,
             csvLine["NUM_INST"] = number
             csvLine["RL"] = fitness_rl
             csvLine["TIME_RL"] = t_rl
-            csvLine["OPT"] = Liste_opt[number]
+            csvLine["OPT"] = Liste_opt[number - 1]
             writer.writerow(csvLine)
             f.flush()
             csvLine=dict()   
@@ -342,17 +347,27 @@ def appliquer_recherche_locale_groupe_instances_population_rh(dirname,Liste_opt,
 pMutationMin = 0.01
 pMutationMax = 0.04
 probaMutation = random.uniform(pMutationMin, pMutationMax)
-filename_stp = "../B/b14.stp"
+filename_stp = "../C/c18.stp"
 #appliquer_algo_genetique(filename_stp,50,probaMutation,timeLimit=60)
-taillePopulation = 52
+taillePopulation = 10
 probaMinRandomisaton = 0.05
 probaMaxRandomisation = 0.2
 
 type_inst = "C"
-#compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation)
-appliquer_comparaison_population_initiale_groupe_instances("../"+type_inst,optimal_value(type_inst),taillePopulation)
+stop_event = Event()
+
+G = Whole_Graph(filename_stp)
+# print "_______________V = {}, E = {} , T = {}   OPT VALUE {} ____________________\n".format(G.NumNodes,G.NumEdges,G.NumTerminals,optimal_value(type_inst)[7])
+# G.generer_N_individus_aleatoire(taillePopulation,0.2,0.5,stop_event)
+# G.generer_N_individus_heuristique(taillePopulation,G.heuristique_ACPM,probaMinRandomisaton,probaMaxRandomisation,stop_event)
+compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation)
+
+# appliquer_comparaison_population_initiale_groupe_instances("../"+type_inst,optimal_value(type_inst),taillePopulation)
+
+
+
+
 #for type_inst in ["B","C","D","E"]:
-##appliquer_algo_genetique_randomise(filename_stp,taillePopulation,"PCM",probaMutation,probaMinRandomisaton=0.05,probaMaxRandomisation=0.2,probaCroisement=0.2,timeLimit=30)    #RETIRER LES VALEURS PAR DEFAUT
 #    dirname = "../"+type_inst
 #
 #    timeLimit=10
