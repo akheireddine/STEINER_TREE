@@ -383,7 +383,7 @@ class Whole_Graph:
         # Chemin.reverse()
         return Chemin
 
-    def construireGrapheDistance(self,g):
+    def construireGrapheDistance(self):
         ListeTerminals = list(self.setTerminals)
         paths = dict()
         dictValuationDistance = dict()
@@ -460,13 +460,13 @@ class Whole_Graph:
                 pass
             
         #Graphe de depart contenant tout les noeuds 
-        Individu = Graphe_Individu(self,self.wholeGraphDict)
-        G = Individu.get_graphe()
+        # Individu = Graphe_Individu(self,self.wholeGraphDict)
+        # G = Individu.get_graphe()
+        #
+        # if draw:
+        #     self.drawGraph("/H_ShortestPath/G0",G.get_edges())
 
-        if draw:
-            self.drawGraph("/H_ShortestPath/G0",G.get_edges())
-
-        G1,graphPaths = self.construireGrapheDistance(G)
+        G1,graphPaths = self.construireGrapheDistance()
         if draw:
             self.drawGraph("/H_ShortestPath/G1",G1.graphe.get_edges())
 

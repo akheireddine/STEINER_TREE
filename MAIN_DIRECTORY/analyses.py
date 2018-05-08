@@ -345,7 +345,7 @@ def appliquer_recherche_locale_groupe_instances_population_rh(dirname,Liste_opt,
 pMutationMin = 0.01
 pMutationMax = 0.04
 probaMutation = random.uniform(pMutationMin, pMutationMax)
-filename_stp = "../E/e18.stp"
+filename_stp = "../E/e20.stp"
 #appliquer_algo_genetique(filename_stp,50,probaMutation,timeLimit=60)
 taillePopulation = 1
 probaMinRandomisaton = 0.05
@@ -354,11 +354,11 @@ probaMutationMin=0.01
 probaMutationMax=0.04
 probaCroisement = 0.2
 
-type_inst = "B"
+type_inst = "E"
 stop_event = Event()
 
 G = Whole_Graph(filename_stp)
-print "_______________V = {}, E = {} , T = {}   OPT VALUE {} ____________________\n".format(G.NumNodes,G.NumEdges,G.NumTerminals,optimal_value(type_inst)[1])
+print "_______________V = {}, E = {} , T = {}   OPT VALUE {} ____________________\n".format(G.NumNodes,G.NumEdges,G.NumTerminals,optimal_value(type_inst)[19])
 # G.generer_N_individus_aleatoire(taillePopulation,0.2,0.5,stop_event)
 # G.generer_N_individus_heuristique(taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisation,stop_event)
 # compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation)
