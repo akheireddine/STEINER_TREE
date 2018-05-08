@@ -44,6 +44,8 @@ from py_alg_dat.min_heap import MinHeap
 from py_alg_dat.minimum_spanning_tree import MinimumSpanningTree
 from py_alg_dat.partition import Partition
 
+import time
+
 class GraphAlgorithms(object):
 
     """
@@ -207,6 +209,7 @@ class GraphAlgorithms(object):
         @return: Table of entries giving the shortest path from source to all other vertices.
         @rtype: L{ArrayList}
         """
+
         number_of_vertices = graph.get_number_of_vertices()
         table = ArrayList(number_of_vertices)
         for i in xrange(number_of_vertices):
@@ -219,6 +222,7 @@ class GraphAlgorithms(object):
             vertex_one = association.get_value()
             if not table[vertex_one.vertex_number].discovered:
                 table[vertex_one.vertex_number].discovered = True
+                deb = time.time()
                 for edge in vertex_one.get_emanating_edges():
                     vertex_two = edge.get_mate(vertex_one)
                     path_distance = table[vertex_one.vertex_number].distance + edge.get_weight()

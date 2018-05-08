@@ -8,6 +8,7 @@ import sys
 import os 
 from os import path
 sys.path.append(path.dirname('../PyAlgDat/py_alg_dat'))
+from heapq import heappush, heappop
 
 from py_alg_dat.graph_algorithms import GraphAlgorithms
 from Graphe_Individu import Graphe_Individu
@@ -40,7 +41,7 @@ class Whole_Graph:
         
         
 
-        while line != 'EOF\n':#i < 90:
+        while line != 'EOF\n':
             line = f.readline()
 
             lineSplit = line.split(' ')
@@ -126,6 +127,7 @@ class Whole_Graph:
             self.generer_individu_aleatoire(random.uniform(probaMin, probaMax))
             if event.is_set():
                 break
+        self.calculer_meilleur_fitness()
 
     def calculer_proba_associee(self):
         total_cout = 0
@@ -221,15 +223,15 @@ class Whole_Graph:
                 maximumFitness = individu.get_fitness()
             i += 1
 
-        # print "minFitness", minimumFitness
-        # print "---------------------------------------------------------------"
+        print "minFitness", minimumFitness
+        print "---------------------------------------------------------------"
         return i_meilleur
         
     def stocker_best_individu(self, i):
         if self.best_individu.get_fitness() > self.ListeIndividus[i].get_fitness():
             self.best_individu = Graphe_Individu(self, self.ListeIndividus[i].get_dictSteinerNodes().copy())
             self.last_time_bestIndividu = time.time()
-            # print "============== MAJ BEST INDIVIDU ============== \n minFitness (%.2f"%(self.last_time_bestIndividu-self.start)+" sec) : "+self.best_individu.get_fitness()
+            print "============== MAJ BEST INDIVIDU (%.2f"%(self.last_time_bestIndividu-self.start)+" sec) : %d"%self.best_individu.get_fitness()+" ============== \n "
             
             
     def get_time_max_fitness(self):
@@ -264,6 +266,7 @@ class Whole_Graph:
         
 #        for nbG in range(nombreDeGenerations):
         while True:
+            print" where am I REMPLACEMENT GENERATIONNEL"
             self.ListeIndividus = nouvelle_generation()
             self.stocker_best_individu(self.calculer_meilleur_fitness())
             if best_fitness == self.best_individu.get_fitness():
@@ -329,84 +332,101 @@ class Whole_Graph:
         
         
 ##########################################################################____RANDOMISATION_DES_HEURISTIQUES____############################################################################################" 
-        
+
+
         
         
     def getIdVerticesOfEdge(self,edge):
         s = int(edge.get_head_vertex().get_vertex_name())
         t = int(edge.get_tail_vertex().get_vertex_name())
         return s,t
-        
-        
+
+    def dijkstra(self, source):
+        def valeur_arete(n1, n2):
+            node1 = min(n1, n2)
+            node2 = max(n1, n2)
+            return self.dictValuations[(node1, node2)]
+
+        TabPredecesseurs = [0 for i in range(self.NumNodes + 1)]
+        TabDistanceALaSource = [float("+inf") for i in range(self.NumNodes + 1)]
+        TAS = []
+        Fermes = set()
+        # INITIALISATION
+        TabDistanceALaSource[source] = 0
+        TabPredecesseurs[source] = -1
+
+        heappush(TAS, (0, source))
+        while len(TAS) != 0 and self.setTerminals not in Fermes:
+            d, noeud_courant = heappop(TAS)
+            if noeud_courant not in Fermes:
+                for noeud_adjacent_noeud_courant in self.dictAdjacence[noeud_courant] - Fermes:
+                    poids_arete = valeur_arete(noeud_adjacent_noeud_courant, noeud_courant)
+                    nouvelle_distance = d + poids_arete
+
+                    if TabDistanceALaSource[noeud_adjacent_noeud_courant] > nouvelle_distance:
+                        TabDistanceALaSource[noeud_adjacent_noeud_courant] = nouvelle_distance
+                        TabPredecesseurs[noeud_adjacent_noeud_courant] = noeud_courant
+                        heappush(TAS, (nouvelle_distance, noeud_adjacent_noeud_courant))
+
+                Fermes.add(noeud_courant)
+
+        return TabPredecesseurs, TabDistanceALaSource
+
+
+    def chemin_entre_noeud_terminal1_et_noeud_terminal2(self, noeud_terminal1, noeud_terminal2, TabPredecesseurs):
+        if TabPredecesseurs[noeud_terminal1] == -1:
+            Chemin = [noeud_terminal2]
+        # elif TabPredecesseurs[noeud_terminal2] == -1:
+        #     Chemin = [noeud_terminal1]
+        while TabPredecesseurs[Chemin[-1]] != -1:
+            Chemin.append(TabPredecesseurs[Chemin[-1]])
+        # Chemin.reverse()
+        return Chemin
+
     def construireGrapheDistance(self,g):
-        """
-            Etape 1 
-            graphPath : pour recuperer les plus courts chemins {(node1_id,node2_id): graphPath Object}
-            Renvoie Objet Individu et le dictionnaire des chemins 
-        """
-        graphPaths = dict()
-        ListTerminals = list(self.setTerminals)
-       
-        #besoin pour recuperer les objets noeuds dans le graphe initial g
-        ObjVertices = {int(v.get_vertex_name()) : v for v in g.get_vertices() if int(v.get_vertex_name()) in ListTerminals}   
-
+        ListeTerminals = list(self.setTerminals)
+        paths = dict()
         dictValuationDistance = dict()
-        dictAdjacenceDistance = {n : list() for n in self.setTerminals}
-        
-        #Calcul du plus court chemin entre chaque noeuds terminal
-        for i in range(len(ListTerminals)-1):
-            for j in range(i+1,len(ListTerminals)) :
-                s = ListTerminals[i]
-                t = ListTerminals[j]
-                shortestPath = GraphAlgorithms.shortest_path(g,ObjVertices[s],ObjVertices[t])
-                l = [s,t]
+        dictAdjacenceDistance = {n : (self.setTerminals - {n}) for n in self.setTerminals}
+        for v,i in zip(ListeTerminals[:-1],range(len(ListeTerminals)-1)):
+            TabPredecesseurs, TabDistanceALaSource = self.dijkstra(v)
+            for u in ListeTerminals[i+1:]:
+                l = [v,u]
                 l.sort()
-                graphPaths[tuple(l)] =  shortestPath
+                l = tuple(l)
+                paths[l] = self.chemin_entre_noeud_terminal1_et_noeud_terminal2(v,u,TabPredecesseurs)
+                dictValuationDistance[l] = TabDistanceALaSource[u]
 
-                dictValuationDistance[(s,t)] = shortestPath.get_path_length()
-                dictAdjacenceDistance[s].append(t)
-                dictAdjacenceDistance[s].append(s)
-                
         self.dictValuations = dictValuationDistance  #modifier le dictionnaire des valuations des aretes
-        dictAdjacenceOriginel = self.dictAdjacence.copy() 
-        self.dictAdjacence =  dictAdjacenceDistance  #modifier le dictionnaire des adjacences qui ne contient que sommets terminaux
-        
-        #Graphe ne contenant que les noeuds terminaux
+        dictAdjacenceOriginel = self.dictAdjacence.copy()
+        self.dictAdjacence = dictAdjacenceDistance
         G = Graphe_Individu(self,dict())
-              
         self.reinitialiser_dictValuations()
         self.dictAdjacence = dictAdjacenceOriginel
-        
-        return G,graphPaths
-    
-                
+
+        return G,paths
+
                 
 
-    def reconstruireGrapheChemins(self,edgesACPM,graphPaths):
+    def reconstruireGrapheChemins(self, edgesACPM, paths):
         """
             Etape 3
-            Renvoie Objet Individu 
+            Renvoie Objet Individu
         """
-        def get_vertices_by_name(vertices):
-            s = set()
-            for v in vertices:
-                s.add(int(v.get_vertex_name()))
-            return s
-            
-        #Recuperer l'ensemble  de noeuds de l'ACPM
+
+        # Recuperer l'ensemble  de noeuds de l'ACPM
         set_Nodes = set()
         for stpath in edgesACPM:
-            node1,node2 = self.getIdVerticesOfEdge(stpath)
-            l = [node1,node2]
+            node1, node2 = self.getIdVerticesOfEdge(stpath)
+            l = [node1, node2]
             l.sort()
-            path = graphPaths[tuple(l)]
-            set_Nodes |= get_vertices_by_name(path.get_vertices())
-            
-        dictSteinerNodesPath = {n : 1 for n in set_Nodes}
+            path = paths[tuple(l)]
+            set_Nodes |= set(path)
 
-        G = Graphe_Individu(self,dictSteinerNodesPath)
+        dictSteinerNodesPath = {n: 1 for n in set_Nodes}
+
+        G = Graphe_Individu(self, dictSteinerNodesPath)
         return G
-
     
     
     
@@ -442,30 +462,32 @@ class Whole_Graph:
         #Graphe de depart contenant tout les noeuds 
         Individu = Graphe_Individu(self,self.wholeGraphDict)
         G = Individu.get_graphe()
+
         if draw:
             self.drawGraph("/H_ShortestPath/G0",G.get_edges())
-        
+
         G1,graphPaths = self.construireGrapheDistance(G)
         if draw:
             self.drawGraph("/H_ShortestPath/G1",G1.graphe.get_edges())
+
         """
             Etape 2
         """
         G2 = G1.get_MST()
         if draw:
             self.drawGraph("/H_ShortestPath/G2_%d"%G2.get_total_weight(),G2.get_edges())
-        
 
         G3 = self.reconstruireGrapheChemins(G2.get_edges(),graphPaths)
         if draw:
             self.drawGraph("/H_ShortestPath/G3_%d"%G3.get_MST().get_total_weight(),G3.graphe.get_edges())                     
+
         """
             Etape 4
         """        
         G4 = G3.get_MST()
         if draw:
             self.drawGraph("/H_ShortestPath/G4_%d"%G4.get_total_weight(),G4.get_edges())
-        
+
         dictSteinerNodes = self.eliminationFeuilles(G4.get_edges(),G3.get_dictSteinerNodes().keys())
 
         G5 = Graphe_Individu(self,dictSteinerNodes)
@@ -475,8 +497,11 @@ class Whole_Graph:
         for i in self.steinerNodes:
             if i not in dictSteinerNodes.keys():
                 dictSteinerNodes[i] = 0
-        
-        # return Graphe_Individu(self,dictSteinerNodes)
+
+        for i in self.steinerNodes :
+            if i not in dictSteinerNodes.keys():
+                dictSteinerNodes[i] = 0
+
         return dictSteinerNodes
 
         
@@ -589,10 +614,11 @@ class Whole_Graph:
                 
               
     def generer_N_individus_heuristique(self, N, heuristique, probaMinRandomisaton, probaMaxRandomisation,event=Event()):
-        
+
         self.ListeIndividus = list()
         for i in range(N):
             self.randomisation_des_donnees_initiales(probaMinRandomisaton, probaMaxRandomisation)
+
 #            ListeDesDictSteinerNodes.append(heuristique())
             dict_indiv = heuristique()
             self.reinitialiser_dictValuations()
