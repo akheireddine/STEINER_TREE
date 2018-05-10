@@ -122,12 +122,11 @@ class Whole_Graph:
         currentIndividu = Graphe_Individu(self,steinerNodesDict)
         self.ListeIndividus.append(currentIndividu)
 
-    def generer_N_individus_aleatoire(self, N, probaMin, probaMax,event):
+    def generer_N_individus_aleatoire(self, N, probaMin, probaMax,event=Event()):
         for i in range(N):
             self.generer_individu_aleatoire(random.uniform(probaMin, probaMax))
             if event.is_set():
                 break
-        self.calculer_meilleur_fitness()
 
     def calculer_proba_associee(self):
         total_cout = 0
@@ -223,15 +222,15 @@ class Whole_Graph:
                 maximumFitness = individu.get_fitness()
             i += 1
 
-        print "minFitness", minimumFitness
-        print "---------------------------------------------------------------"
+        # print "minFitness", minimumFitness
+        # print "---------------------------------------------------------------"
         return i_meilleur
         
     def stocker_best_individu(self, i):
         if self.best_individu.get_fitness() > self.ListeIndividus[i].get_fitness():
             self.best_individu = Graphe_Individu(self, self.ListeIndividus[i].get_dictSteinerNodes().copy())
             self.last_time_bestIndividu = time.time()
-            print "============== MAJ BEST INDIVIDU (%.2f"%(self.last_time_bestIndividu-self.start)+" sec) : %d"%self.best_individu.get_fitness()+" ============== \n "
+            # print "============== MAJ BEST INDIVIDU (%.2f"%(self.last_time_bestIndividu-self.start)+" sec) : %d"%self.best_individu.get_fitness()+" ============== \n "
             
             
     def get_time_max_fitness(self):
@@ -266,7 +265,6 @@ class Whole_Graph:
         
 #        for nbG in range(nombreDeGenerations):
         while True:
-            print" where am I REMPLACEMENT GENERATIONNEL"
             self.ListeIndividus = nouvelle_generation()
             self.stocker_best_individu(self.calculer_meilleur_fitness())
             if best_fitness == self.best_individu.get_fitness():
@@ -629,6 +627,7 @@ class Whole_Graph:
                 self.reinitialiser_dictValuations()
                 print " I PASSED IN EVENT STOP HEURISTIC "
                 break
+
 
         
 

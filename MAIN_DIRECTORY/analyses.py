@@ -34,16 +34,16 @@ def thread_timeout(target, args, timeLimit):
 
 def appliquer_algo_genetique_aleatoire(filename_stp, opt_value, taillePopulation,probaMutation,probaMinGene=0.2,probaMaxGene=0.5,probaCroisement=0.2,timeLimit=300): #RETIRER LES VALEURS PAR DEFAUT
 
-    best_individus = list()    
+    best_individus = list()
     G = Whole_Graph(filename_stp)
     t = time.time()
-    G.generer_N_individus_aleatoire(taillePopulation,probaMinGene,probaMaxGene)
+    G.generer_N_individus_aleatoire(taillePopulation,probaMinGene,probaMaxGene,Event())
     timeLimit = timeLimit - (time.time() - t)
-    
+
     
     thread_timeout(G.remplacement_generationnel, [opt_value, probaMutation,probaCroisement],timeLimit)
     best_individus.append(G.best_individu.get_fitness())
-#    print("GEN", str(G.ListeIndividus[G.calculer_meilleur_fitness()]))
+    print("GEN", str(G.ListeIndividus[G.calculer_meilleur_fitness()]))
   
     best_individus.append(G.get_time_max_fitness())
 
@@ -51,7 +51,7 @@ def appliquer_algo_genetique_aleatoire(filename_stp, opt_value, taillePopulation
 
     thread_timeout(G.remplacement_elitiste, [opt_value, probaMutation,probaCroisement],timeLimit)
     best_individus.append(G.best_individu.get_fitness())
-#    print("ELI", str(G.ListeIndividus[G.calculer_meilleur_fitness()]))
+    print("ELI", str(G.ListeIndividus[G.calculer_meilleur_fitness()]))
 
     best_individus.append(G.get_time_max_fitness())
 
@@ -78,22 +78,18 @@ def appliquer_algo_genetique_groupe_instances_aleatoire(dirname, Liste_opt, tail
     
         for filename_stp in os.listdir(dirname):
             number = int(filename_stp[1:3])
+            print"_______________ FILE {} _______________".format(filename_stp)
             gen,time_gen, eli,time_eli = appliquer_algo_genetique_aleatoire(dirname+"/"+filename_stp, Liste_opt[number-1], taillePopulation, probaMutation, probaMinGene, probaMaxGene, probaCroisement, timeLimit)
             Liste_opt_gene.insert(number,(gen,time_gen))
             Liste_opt_eli.insert(number,(eli,time_eli))
     
-#        for i in range(nb_instances):
             csvLine["NUM_INST"] = number
             csvLine["GEN"] = gen
             csvLine["TIME_GEN"] = time_gen
             csvLine["ELI"] = eli
             csvLine["TIME_ELI"] = time_eli
-            csvLine["OPT"] = Liste_opt[number]
-#            csvLine["GEN"] = Liste_opt_gene[i][0]
-#            csvLine["TIME_GEN"] = Liste_opt_gene[i][1]
-#            csvLine["ELI"] = Liste_opt_eli[i][0]
-#            csvLine["TIME_ELI"] = Liste_opt_eli[i][1]
-#            csvLine["OPT"] = listeOpt[i]
+            csvLine["OPT"] = Liste_opt[number-1]
+
             writer.writerow(csvLine)
             f.flush()
             csvLine=dict()   
@@ -163,7 +159,7 @@ def appliquer_algo_genetique_groupe_instances_randomise(dirname, Liste_opt, tail
             gen,time_gen, eli,time_eli = appliquer_algo_genetique_randomise(dirname+"/"+filename_stp, Liste_opt[number - 1], taillePopulation, heuristique,  probaMutation, probaMinRandomisation, probaMaxRandomisation, probaCroisement, timeLimit)
             Liste_opt_gene.insert(number,(gen,time_gen))
             Liste_opt_eli.insert(number,(eli,time_eli))
-
+            print " GENERATIONNEL {} ({} sec) \t\t ELITISTE {} ({} sec)\n\n".format(gen,time_gen,eli,time_eli)
             csvLine["NUM_INST"] = number
             csvLine["GEN"] = gen
             csvLine["TIME_GEN"] = time_gen
@@ -187,14 +183,14 @@ def compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation
     G = Whole_Graph(filename_stp)
     print " INDIVIDU AVEC {} NOEUDS {} EDGE et  {} TERMINAUX \n".format(G.NumNodes,G.NumEdges,G.NumTerminals)
     t = time.time()
-    args = [taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisaton]
-    thread_timeout(G.generer_N_individus_heuristique,args,timeLimit)
-#    G.generer_N_individus_heuristique(taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisaton)
+    # args = [taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisaton]
+    # thread_timeout(G.generer_N_individus_heuristique,args,timeLimit)
+    G.generer_N_individus_heuristique(taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisaton)
     t_pcm = time.time() - t
-    if len(G.ListeIndividus) == 0:
-        parameters.append(float("inf"))
-    else:
-        parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
+    # if len(G.ListeIndividus) == 0:
+    #     parameters.append(float("inf"))
+    # else:
+    parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
     print "________________PCM DONE en {} sec_______________\n".format(t_pcm)
     parameters.append(t_pcm)
     
@@ -203,29 +199,28 @@ def compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation
     G.reinitialiser_dictValuations()
 
     t = time.time()
-    args = [taillePopulation,probaMinGene,probaMaxGene]
-    thread_timeout(G.generer_N_individus_aleatoire,args,timeLimit)
-#    G.generer_N_individus_aleatoire(taillePopulation,probaMinGene,probaMaxGene)
+    # args = [taillePopulation,probaMinGene,probaMaxGene]
+    # thread_timeout(G.generer_N_individus_aleatoire,args,timeLimit)
+    G.generer_N_individus_aleatoire(taillePopulation,probaMinGene,probaMaxGene)
     t_alea = time.time() - t
-    if len(G.ListeIndividus) == 0:
-        parameters.append(float("inf"))
-    else:
-        parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
+    # if len(G.ListeIndividus) == 0:
+    #     parameters.append(float("inf"))
+    # else:
+    parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
     parameters.append(t_alea)
     print "________________ALEA DONE en {} sec_______________\n".format(t_alea)
 
     G.reset_listIndividus()
     
     t = time.time()
-    args = [taillePopulation,G.heuristique_ACPM,probaMinRandomisaton,probaMaxRandomisaton]
-    thread_timeout(G.generer_N_individus_heuristique,args,timeLimit)
-#    G.generer_N_individus_heuristique(taillePopulation,G.heuristique_ACPM,probaMinRandomisaton,probaMaxRandomisaton)
+    # args = [taillePopulation,G.heuristique_ACPM,probaMinRandomisaton,probaMaxRandomisaton]
+    # thread_timeout(G.generer_N_individus_heuristique,args,timeLimit)
+    G.generer_N_individus_heuristique(taillePopulation,G.heuristique_ACPM,probaMinRandomisaton,probaMaxRandomisaton)
     t_acpm = time.time() - t
-    if len(G.ListeIndividus) == 0:
-        parameters.append(float("inf"))
-    else:
-        parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
-
+    # if len(G.ListeIndividus) == 0:
+    #     parameters.append(float("inf"))
+    # else:
+    parameters.append(G.ListeIndividus[G.calculer_meilleur_fitness()].get_fitness())
     parameters.append(t_acpm)
     print "________________ACPM DONE en {} sec_______________\n".format(t_acpm)
 
@@ -250,6 +245,8 @@ def appliquer_comparaison_population_initiale_groupe_instances(dirname,Liste_opt
 
         for filename_stp in os.listdir(dirname):
             number = int(filename_stp[1:3])
+            # if number in [20,5,2]:
+            #     continue
             print "\n\n___________FILE {}  OPT {}________________\n".format(filename_stp,Liste_opt[number - 1])
             pcm,t_pcm,alea,t_alea,acpm,t_acpm = compare_population_aleatoire_et_r_heuristiques(dirname+"/"+filename_stp,taillePopulation,probaMinRandomisaton,probaMaxRandomisaton,probaMinGene,probaMaxGene)
             Liste_opt_pcm.insert(number,(pcm,t_pcm))
@@ -345,43 +342,46 @@ def appliquer_recherche_locale_groupe_instances_population_rh(dirname,Liste_opt,
 pMutationMin = 0.01
 pMutationMax = 0.04
 probaMutation = random.uniform(pMutationMin, pMutationMax)
-filename_stp = "../E/e20.stp"
-#appliquer_algo_genetique(filename_stp,50,probaMutation,timeLimit=60)
-taillePopulation = 1
+taillePopulation = 10
 probaMinRandomisaton = 0.05
 probaMaxRandomisation = 0.2
 probaMutationMin=0.01
 probaMutationMax=0.04
 probaCroisement = 0.2
 
-type_inst = "E"
-stop_event = Event()
+# type_inst = "B"
+# num = '01'
+# filename_stp = "../B/b"+num+".stp"
 
-G = Whole_Graph(filename_stp)
-print "_______________V = {}, E = {} , T = {}   OPT VALUE {} ____________________\n".format(G.NumNodes,G.NumEdges,G.NumTerminals,optimal_value(type_inst)[19])
-# G.generer_N_individus_aleatoire(taillePopulation,0.2,0.5,stop_event)
-# G.generer_N_individus_heuristique(taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisation,stop_event)
+
+# G = Whole_Graph(filename_stp)
+# print "_______________V = {}, E = {} , T = {}   OPT VALUE {} ____________________\n".format(G.NumNodes,G.NumEdges,G.NumTerminals,optimal_value(type_inst)[19])
+# G.generer_N_individus_aleatoire(taillePopulation,0.2,0.5)
+# G.generer_N_individus_heuristique(taillePopulation,G.heuristique_PCM,probaMinRandomisaton,probaMaxRandomisation)
 # compare_population_aleatoire_et_r_heuristiques(filename_stp,taillePopulation)
 # G.remplacement_generationnel(optimal_value(type_inst)[1],random.uniform(probaMinRandomisaton,probaMaxRandomisation),probaCroisement,stop_event)
 # print " ____best fitness %d"%G.best_individu.get_fitness()
 # appliquer_comparaison_population_initiale_groupe_instances("../"+type_inst,optimal_value(type_inst),taillePopulation)
-t = time.time()
-dic = G.heuristique_PCM()
-print "time : ",time.time() - t
-indiv = Graphe_Individu(G,dic)
-print "fitness ",indiv.get_fitness()
+# t = time.time()
+# dic = G.heuristique_PCM()
+# print "time : ",time.time() - t
+# indiv = Graphe_Individu(G,dic)
+# print "fitness ",indiv.get_fitness()
 
+# appliquer_algo_genetique_aleatoire(filename_stp, optimal_value(type_inst)[int(num)-1], taillePopulation,probaMutation)
 
-
-# for type_inst in ["B","C","D","E"]:
-#    dirname = "../"+type_inst
 #
-#    timeLimit=300
-#    try:
-#        print "ALGO GENETIQUE ALEATOIRE GROUPE INSTANCE "+type_inst
-#        appliquer_algo_genetique_groupe_instances_aleatoire(dirname,optimal_value(type_inst), taillePopulation,timeLimit=timeLimit)
-#    except:
-#        pass
+for t in ["B","C","D","E"]:
+   dirname = "../"+t
+
+   timeLimit=300
+
+   # try:
+   #     print "ALGO GENETIQUE ALEATOIRE GROUPE INSTANCE "+t
+   #     appliquer_algo_genetique_groupe_instances_aleatoire(dirname,optimal_value(t), taillePopulation,timeLimit=timeLimit)
+   # except:
+   #     print "error in type "+t
+   #     pass
     
    # try:
    #     print "ALGO GENETIQUE ALEATOIRE GROUPE INSTANCE "+type_inst
@@ -394,10 +394,11 @@ print "fitness ",indiv.get_fitness()
 #    except:
 #        pass
 # #
-#    try:
-#        print "COMPARAISON POPULATION ALEA ET RANDOM HEURISTIC    GROUPE INSTANCE :"+type_inst
-#        appliquer_comparaison_population_initiale_groupe_instances(dirname,optimal_value(type_inst),taillePopulation)
-#    except:
-#        pass
+   try:
+    print "COMPARAISON POPULATION ALEA ET RANDOM HEURISTIC    GROUPE INSTANCE :"+t
+    appliquer_comparaison_population_initiale_groupe_instances(dirname,optimal_value(t),taillePopulation)
+   except:
+       print "error type "+t
+       pass
     
     
