@@ -84,10 +84,10 @@ class Graphe_Individu:
             
             
         def __str__(self):
-            return "Steiner Nodes : " + str(self.dictSteinerNodes) + " Fitness : " + str(self.my_fitness)
-        
+            # return "Steiner Nodes : " + str(self.dictSteinerNodes) + " Fitness : " + str(self.my_fitness)
+            return " Fitness : " + str(self.my_fitness)
 
-        
+
         
         
         
